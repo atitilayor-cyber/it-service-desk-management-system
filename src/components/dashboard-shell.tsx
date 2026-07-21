@@ -267,6 +267,6 @@ function NotificationsBell({ role, userId }: { role: AppRole; userId: string }) 
           )}
         </div>
       </PopoverContent>
-    </P>
+    </Popover>
   );
 }
