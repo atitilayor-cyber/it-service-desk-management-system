@@ -51,7 +51,7 @@ function TicketDetail() {
   const assignMut = useMutation({
     mutationFn: (tid: string) => assignFn({ data: { ticketId: id, technicianId: tid } }),
     onSuccess: () => {
-      toast.success("Ticket assigned");
+      toast.success("Ticket assigned — technician notified");
       qc.invalidateQueries({ queryKey: ["ticket", id] });
       qc.invalidateQueries({ queryKey: ["tickets"] });
     },
