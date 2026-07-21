@@ -127,26 +127,35 @@ function TicketDetail() {
             </CardHeader>
             <CardContent>
               <ol className="space-y-4">
-                {history.map((h, idx) => (
-                  <li key={h.id} className="flex gap-3">
-                    <div className="flex flex-col items-center">
-                      <div className={`grid h-6 w-6 place-items-center rounded-full ${idx === history.length - 1 ? "bg-primary text-primary-foreground" : "bg-muted"}`}>
-                        {idx === history.length - 1 ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Circle className="h-2.5 w-2.5 fill-current" />}
+                {history.map((h, idx) => {
+                  const isNoteOnly = h.from_status && h.from_status === h.to_status;
+                  return (
+                    <li key={h.id} className="flex gap-3">
+                      <div className="flex flex-col items-center">
+                        <div className={`grid h-6 w-6 place-items-center rounded-full ${idx === history.length - 1 ? "bg-primary text-primary-foreground" : "bg-muted"}`}>
+                          {idx === history.length - 1 ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Circle className="h-2.5 w-2.5 fill-current" />}
+                        </div>
+                        {idx < history.length - 1 && <div className="w-px flex-1 bg-border" />}
                       </div>
-                      {idx < history.length - 1 && <div className="w-px flex-1 bg-border" />}
-                    </div>
-                    <div className="flex-1 min-w-0 pb-4">
-                      <div className="text-sm">
-                        {h.from_status ? <><span className="text-muted-foreground">{h.from_status}</span> → </> : null}
-                        <Badge variant="outline" className={STATUS_COLORS[h.to_status as TicketStatus]}>{h.to_status}</Badge>
+                      <div className="flex-1 min-w-0 pb-4">
+                        <div className="text-sm">
+                          {isNoteOnly ? (
+                            <span className="font-medium">Work note</span>
+                          ) : (
+                            <>
+                              {h.from_status ? <><span className="text-muted-foreground">{h.from_status}</span> → </> : null}
+                              <Badge variant="outline" className={STATUS_COLORS[h.to_status as TicketStatus]}>{h.to_status}</Badge>
+                            </>
+                          )}
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-0.5">
+                          {format(new Date(h.created_at), "PPp")}
+                        </div>
+                        {h.note && <div className="text-sm mt-1 text-muted-foreground whitespace-pre-wrap">{h.note}</div>}
                       </div>
-                      <div className="text-xs text-muted-foreground mt-0.5">
-                        {format(new Date(h.created_at), "PPp")}
-                      </div>
-                      {h.note && <div className="text-sm mt-1 text-muted-foreground">{h.note}</div>}
-                    </div>
-                  </li>
-                ))}
+                    </li>
+                  );
+                })}
               </ol>
             </CardContent>
           </Card>
