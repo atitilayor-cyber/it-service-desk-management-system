@@ -74,6 +74,37 @@ function Reports() {
     URL.revokeObjectURL(url);
   }
 
+  function exportPdf() {
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text("HelpDesk Pro — Tickets Report", 14, 18);
+    doc.setFontSize(10);
+    doc.setTextColor(120);
+    doc.text(`Generated ${new Date().toLocaleString()}`, 14, 25);
+    doc.text(
+      `Total: ${tickets.length}  ·  Resolved: ${tickets.filter((t) => t.status === "Resolved" || t.status === "Closed").length}`,
+      14,
+      31,
+    );
+    autoTable(doc, {
+      startY: 38,
+      head: [["Ticket #", "Title", "Category", "Priority", "Status", "Requester", "Assignee", "Created"]],
+      body: tickets.map((t) => [
+        t.ticket_number,
+        t.title,
+        t.category,
+        t.priority,
+        t.status,
+        t.creator_name ?? "—",
+        t.assignee_name ?? "—",
+        new Date(t.created_at).toLocaleDateString(),
+      ]),
+      styles: { fontSize: 8, cellPadding: 2 },
+      headStyles: { fillColor: [99, 102, 241] },
+    });
+    doc.save(`helpdesk-report-${new Date().toISOString().slice(0, 10)}.pdf`);
+  }
+
   const resolvedCount = tickets.filter((t) => t.status === "Resolved" || t.status === "Closed").length;
   const avgResolution =
     tickets
