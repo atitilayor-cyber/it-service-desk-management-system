@@ -18,8 +18,7 @@ import { ROLE_LABEL, type AppRole } from "@/lib/roles";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 
 type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; roles: AppRole[] };
 
@@ -56,7 +55,8 @@ export function DashboardShell({ children }: { children: ReactNode }) {
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-64 p-0 bg-sidebar text-sidebar-foreground">
-                <VisuallyHidden><SheetTitle>Navigation</SheetTitle></VisuallyHidden>
+                <SheetTitle className="sr-only">Navigation</SheetTitle>
+                <SheetDescription className="sr-only">Main navigation menu</SheetDescription>
                 <SidebarInner
                   items={items}
                   role={role}
