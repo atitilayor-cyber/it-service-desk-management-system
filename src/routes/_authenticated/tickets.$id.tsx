@@ -210,6 +210,28 @@ function TicketDetail() {
               </CardContent>
             </Card>
           )}
+
+          {(isTechForTicket || role === "admin") && (
+            <Card>
+              <CardHeader><CardTitle className="text-base">Add work note</CardTitle></CardHeader>
+              <CardContent className="space-y-3">
+                <Textarea
+                  value={workNote}
+                  onChange={(e) => setWorkNote(e.target.value)}
+                  rows={3}
+                  placeholder="Add a progress update or internal note…"
+                />
+                <Button
+                  className="w-full"
+                  variant="secondary"
+                  disabled={!workNote.trim() || noteMut.isPending}
+                  onClick={() => noteMut.mutate()}
+                >
+                  Post note
+                </Button>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </div>
