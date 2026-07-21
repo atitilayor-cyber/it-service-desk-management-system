@@ -233,23 +233,8 @@ function NotificationsBell({ role, userId }: { role: AppRole; userId: string }) 
     }));
   })();
 
-  const [Popover, setPopover] = useState<any>(null);
-  useEffect(() => {
-    import("@/components/ui/popover").then((m) => setPopover(() => m));
-  }, []);
-
-  if (!Popover) {
-    return (
-      <Button variant="ghost" size="icon" className="relative">
-        <Bell className="h-5 w-5" />
-      </Button>
-    );
-  }
-
-  const { Popover: P, PopoverTrigger, PopoverContent } = Popover;
-
   return (
-    <P>
+    <Popover>
       <PopoverTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
