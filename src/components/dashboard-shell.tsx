@@ -188,3 +188,99 @@ function UserMenu({ name, email, role }: { name: string; email: string; role: Ap
     </div>
   );
 }
+
+function NotificationsBell({ role, userId }: { role: AppRole; userId: string }) {
+  const listFn = useServerFn(listTickets);
+  const { data } = useQuery({
+    queryKey: ["tickets"],
+    queryFn: () => listFn(),
+    enabled: Boolean(userId),
+  });
+  const tickets = data?.tickets ?? [];
+
+  // Fake notifications derived from recent ticket state per role
+  const items = (() => {
+    if (role === "end_user") {
+      return tickets
+        .filter((t) => t.status !== "Open")
+        .slice(0, 6)
+        .map((t) => ({
+          id: t.id,
+          title:
+            t.status === "Resolved" || t.status === "Closed"
+              ? `Your ticket ${t.ticket_number} was resolved`
+              : t.status === "Assigned"
+                ? `Your ticket ${t.ticket_number} was assigned${t.assignee_name ? ` to ${t.assignee_name}` : ""}`
+                : `Your ticket ${t.ticket_number} is ${t.status}`,
+          when: t.updated_at,
+        }));
+    }
+    if (role === "technician") {
+      return tickets
+        .filter((t) => t.status === "Assigned" || t.status === "In Progress")
+        .slice(0, 6)
+        .map((t) => ({
+          id: t.id,
+          title: `${t.ticket_number}: ${t.title}`,
+          when: t.updated_at,
+        }));
+    }
+    return tickets.slice(0, 6).map((t) => ({
+      id: t.id,
+      title: `${t.ticket_number} · ${t.status} — ${t.title}`,
+      when: t.updated_at,
+    }));
+  })();
+
+  const [Popover, setPopover] = useState<any>(null);
+  useEffect(() => {
+    import("@/components/ui/popover").then((m) => setPopover(() => m));
+  }, []);
+
+  if (!Popover) {
+    return (
+      <Button variant="ghost" size="icon" className="relative">
+        <Bell className="h-5 w-5" />
+      </Button>
+    );
+  }
+
+  const { Popover: P, PopoverTrigger, PopoverContent } = Popover;
+
+  return (
+    <P>
+      <PopoverTrigger asChild>
+        <Button variant="ghost" size="icon" className="relative">
+          <Bell className="h-5 w-5" />
+          {items.length > 0 && (
+            <span className="absolute right-1.5 top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white">
+              {items.length}
+            </span>
+          )}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent align="end" className="w-80 p-0">
+        <div className="border-b px-4 py-2 text-sm font-semibold">Notifications</div>
+        <div className="max-h-80 overflow-y-auto divide-y">
+          {items.length === 0 ? (
+            <div className="p-6 text-center text-sm text-muted-foreground">You're all caught up.</div>
+          ) : (
+            items.map((n) => (
+              <Link
+                key={n.id}
+                to="/tickets/$id"
+                params={{ id: n.id }}
+                className="block px-4 py-3 text-sm hover:bg-muted/50"
+              >
+                <div className="font-medium truncate">{n.title}</div>
+                <div className="text-xs text-muted-foreground">
+                  {new Date(n.when).toLocaleString()}
+                </div>
+              </Link>
+            ))
+          )}
+        </div>
+      </PopoverContent>
+    </P>
+  );
+}
