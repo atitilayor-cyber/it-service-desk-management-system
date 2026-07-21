@@ -17,7 +17,9 @@ import {
   Cell,
   Legend,
 } from "recharts";
-import { Download } from "lucide-react";
+import { Download, FileText } from "lucide-react";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 export const Route = createFileRoute("/_authenticated/reports")({
   component: Reports,
@@ -72,6 +74,37 @@ function Reports() {
     URL.revokeObjectURL(url);
   }
 
+  function exportPdf() {
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text("HelpDesk Pro — Tickets Report", 14, 18);
+    doc.setFontSize(10);
+    doc.setTextColor(120);
+    doc.text(`Generated ${new Date().toLocaleString()}`, 14, 25);
+    doc.text(
+      `Total: ${tickets.length}  ·  Resolved: ${tickets.filter((t) => t.status === "Resolved" || t.status === "Closed").length}`,
+      14,
+      31,
+    );
+    autoTable(doc, {
+      startY: 38,
+      head: [["Ticket #", "Title", "Category", "Priority", "Status", "Requester", "Assignee", "Created"]],
+      body: tickets.map((t) => [
+        t.ticket_number,
+        t.title,
+        t.category,
+        t.priority,
+        t.status,
+        t.creator_name ?? "—",
+        t.assignee_name ?? "—",
+        new Date(t.created_at).toLocaleDateString(),
+      ]),
+      styles: { fontSize: 8, cellPadding: 2 },
+      headStyles: { fillColor: [99, 102, 241] },
+    });
+    doc.save(`helpdesk-report-${new Date().toISOString().slice(0, 10)}.pdf`);
+  }
+
   const resolvedCount = tickets.filter((t) => t.status === "Resolved" || t.status === "Closed").length;
   const avgResolution =
     tickets
@@ -87,9 +120,14 @@ function Reports() {
           <h2 className="text-2xl font-bold tracking-tight">Reports & Analytics</h2>
           <p className="text-sm text-muted-foreground">Ticket performance and technician workload.</p>
         </div>
-        <Button variant="outline" onClick={exportCsv}>
-          <Download className="mr-2 h-4 w-4" /> Export CSV
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={exportCsv}>
+            <Download className="mr-2 h-4 w-4" /> Export CSV
+          </Button>
+          <Button onClick={exportPdf}>
+            <FileText className="mr-2 h-4 w-4" /> Export PDF
+          </Button>
+        </div>
       </div>
 
       <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">

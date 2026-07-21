@@ -7,6 +7,7 @@ import {
   assignTicket,
   listTechnicians,
   updateTicketStatus,
+  addTicketNote,
 } from "@/lib/tickets.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -32,6 +33,7 @@ function TicketDetail() {
   const listTechFn = useServerFn(listTechnicians);
   const assignFn = useServerFn(assignTicket);
   const updateFn = useServerFn(updateTicketStatus);
+  const addNoteFn = useServerFn(addTicketNote);
 
   const { data, isLoading } = useQuery({ queryKey: ["ticket", id], queryFn: () => getTicketFn({ data: { id } }) });
   const { data: me } = useQuery({ queryKey: ["me"], queryFn: () => meFn() });
@@ -44,11 +46,12 @@ function TicketDetail() {
   const [selectedTech, setSelectedTech] = useState<string>("");
   const [newStatus, setNewStatus] = useState<TicketStatus>("In Progress");
   const [resolution, setResolution] = useState("");
+  const [workNote, setWorkNote] = useState("");
 
   const assignMut = useMutation({
     mutationFn: (tid: string) => assignFn({ data: { ticketId: id, technicianId: tid } }),
     onSuccess: () => {
-      toast.success("Ticket assigned");
+      toast.success("Ticket assigned — technician notified");
       qc.invalidateQueries({ queryKey: ["ticket", id] });
       qc.invalidateQueries({ queryKey: ["tickets"] });
     },
@@ -59,10 +62,20 @@ function TicketDetail() {
     mutationFn: () =>
       updateFn({ data: { ticketId: id, status: newStatus, resolution: resolution || undefined } }),
     onSuccess: () => {
-      toast.success("Status updated");
+      toast.success(newStatus === "Resolved" ? "Ticket marked as Resolved — requester notified" : `Status updated to ${newStatus}`);
       setResolution("");
       qc.invalidateQueries({ queryKey: ["ticket", id] });
       qc.invalidateQueries({ queryKey: ["tickets"] });
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
+  const noteMut = useMutation({
+    mutationFn: () => addNoteFn({ data: { ticketId: id, note: workNote } }),
+    onSuccess: () => {
+      toast.success("Work note added");
+      setWorkNote("");
+      qc.invalidateQueries({ queryKey: ["ticket", id] });
     },
     onError: (e) => toast.error((e as Error).message),
   });
@@ -114,26 +127,35 @@ function TicketDetail() {
             </CardHeader>
             <CardContent>
               <ol className="space-y-4">
-                {history.map((h, idx) => (
-                  <li key={h.id} className="flex gap-3">
-                    <div className="flex flex-col items-center">
-                      <div className={`grid h-6 w-6 place-items-center rounded-full ${idx === history.length - 1 ? "bg-primary text-primary-foreground" : "bg-muted"}`}>
-                        {idx === history.length - 1 ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Circle className="h-2.5 w-2.5 fill-current" />}
+                {history.map((h, idx) => {
+                  const isNoteOnly = h.from_status && h.from_status === h.to_status;
+                  return (
+                    <li key={h.id} className="flex gap-3">
+                      <div className="flex flex-col items-center">
+                        <div className={`grid h-6 w-6 place-items-center rounded-full ${idx === history.length - 1 ? "bg-primary text-primary-foreground" : "bg-muted"}`}>
+                          {idx === history.length - 1 ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Circle className="h-2.5 w-2.5 fill-current" />}
+                        </div>
+                        {idx < history.length - 1 && <div className="w-px flex-1 bg-border" />}
                       </div>
-                      {idx < history.length - 1 && <div className="w-px flex-1 bg-border" />}
-                    </div>
-                    <div className="flex-1 min-w-0 pb-4">
-                      <div className="text-sm">
-                        {h.from_status ? <><span className="text-muted-foreground">{h.from_status}</span> → </> : null}
-                        <Badge variant="outline" className={STATUS_COLORS[h.to_status as TicketStatus]}>{h.to_status}</Badge>
+                      <div className="flex-1 min-w-0 pb-4">
+                        <div className="text-sm">
+                          {isNoteOnly ? (
+                            <span className="font-medium">Work note</span>
+                          ) : (
+                            <>
+                              {h.from_status ? <><span className="text-muted-foreground">{h.from_status}</span> → </> : null}
+                              <Badge variant="outline" className={STATUS_COLORS[h.to_status as TicketStatus]}>{h.to_status}</Badge>
+                            </>
+                          )}
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-0.5">
+                          {format(new Date(h.created_at), "PPp")}
+                        </div>
+                        {h.note && <div className="text-sm mt-1 text-muted-foreground whitespace-pre-wrap">{h.note}</div>}
                       </div>
-                      <div className="text-xs text-muted-foreground mt-0.5">
-                        {format(new Date(h.created_at), "PPp")}
-                      </div>
-                      {h.note && <div className="text-sm mt-1 text-muted-foreground">{h.note}</div>}
-                    </div>
-                  </li>
-                ))}
+                    </li>
+                  );
+                })}
               </ol>
             </CardContent>
           </Card>
@@ -184,6 +206,28 @@ function TicketDetail() {
                 )}
                 <Button className="w-full" onClick={() => updateMut.mutate()} disabled={updateMut.isPending}>
                   Update status
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+
+          {(isTechForTicket || role === "admin") && (
+            <Card>
+              <CardHeader><CardTitle className="text-base">Add work note</CardTitle></CardHeader>
+              <CardContent className="space-y-3">
+                <Textarea
+                  value={workNote}
+                  onChange={(e) => setWorkNote(e.target.value)}
+                  rows={3}
+                  placeholder="Add a progress update or internal note…"
+                />
+                <Button
+                  className="w-full"
+                  variant="secondary"
+                  disabled={!workNote.trim() || noteMut.isPending}
+                  onClick={() => noteMut.mutate()}
+                >
+                  Post note
                 </Button>
               </CardContent>
             </Card>

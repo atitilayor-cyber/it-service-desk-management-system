@@ -11,14 +11,16 @@ import {
   PlusCircle,
   Headphones,
   Menu,
+  Bell,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { getMe } from "@/lib/tickets.functions";
+import { getMe, listTickets } from "@/lib/tickets.functions";
 import { ROLE_LABEL, type AppRole } from "@/lib/roles";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; roles: AppRole[] };
 
@@ -67,7 +69,10 @@ export function DashboardShell({ children }: { children: ReactNode }) {
             </Sheet>
             <PageTitle />
           </div>
-          <UserMenu name={me?.profile?.full_name ?? "User"} email={me?.profile?.email ?? ""} role={role} />
+          <div className="flex items-center gap-2">
+            <NotificationsBell role={role} userId={me?.userId ?? ""} />
+            <UserMenu name={me?.profile?.full_name ?? "User"} email={me?.profile?.email ?? ""} role={role} />
+          </div>
         </header>
         <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8">{children}</main>
       </div>
@@ -182,5 +187,86 @@ function UserMenu({ name, email, role }: { name: string; email: string; role: Ap
         <LogOut className="mr-2 h-4 w-4" /> Sign out
       </Button>
     </div>
+  );
+}
+
+function NotificationsBell({ role, userId }: { role: AppRole; userId: string }) {
+  const listFn = useServerFn(listTickets);
+  const { data } = useQuery({
+    queryKey: ["tickets"],
+    queryFn: () => listFn(),
+    enabled: Boolean(userId),
+  });
+  const tickets = data?.tickets ?? [];
+
+  // Fake notifications derived from recent ticket state per role
+  const items = (() => {
+    if (role === "end_user") {
+      return tickets
+        .filter((t) => t.status !== "Open")
+        .slice(0, 6)
+        .map((t) => ({
+          id: t.id,
+          title:
+            t.status === "Resolved" || t.status === "Closed"
+              ? `Your ticket ${t.ticket_number} was resolved`
+              : t.status === "Assigned"
+                ? `Your ticket ${t.ticket_number} was assigned${t.assignee_name ? ` to ${t.assignee_name}` : ""}`
+                : `Your ticket ${t.ticket_number} is ${t.status}`,
+          when: t.updated_at,
+        }));
+    }
+    if (role === "technician") {
+      return tickets
+        .filter((t) => t.status === "Assigned" || t.status === "In Progress")
+        .slice(0, 6)
+        .map((t) => ({
+          id: t.id,
+          title: `${t.ticket_number}: ${t.title}`,
+          when: t.updated_at,
+        }));
+    }
+    return tickets.slice(0, 6).map((t) => ({
+      id: t.id,
+      title: `${t.ticket_number} · ${t.status} — ${t.title}`,
+      when: t.updated_at,
+    }));
+  })();
+
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="ghost" size="icon" className="relative">
+          <Bell className="h-5 w-5" />
+          {items.length > 0 && (
+            <span className="absolute right-1.5 top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white">
+              {items.length}
+            </span>
+          )}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent align="end" className="w-80 p-0">
+        <div className="border-b px-4 py-2 text-sm font-semibold">Notifications</div>
+        <div className="max-h-80 overflow-y-auto divide-y">
+          {items.length === 0 ? (
+            <div className="p-6 text-center text-sm text-muted-foreground">You're all caught up.</div>
+          ) : (
+            items.map((n) => (
+              <Link
+                key={n.id}
+                to="/tickets/$id"
+                params={{ id: n.id }}
+                className="block px-4 py-3 text-sm hover:bg-muted/50"
+              >
+                <div className="font-medium truncate">{n.title}</div>
+                <div className="text-xs text-muted-foreground">
+                  {new Date(n.when).toLocaleString()}
+                </div>
+              </Link>
+            ))
+          )}
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 }

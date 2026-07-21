@@ -148,6 +148,31 @@ export const updateTicketStatus = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const addTicketNote = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ ticketId: z.string().uuid(), note: z.string().trim().min(1).max(2000) }).parse(d),
+  )
+  .handler(async ({ context, data }) => {
+    const { supabase, userId } = context;
+    const { data: t, error: tErr } = await supabase
+      .from("tickets")
+      .select("status")
+      .eq("id", data.ticketId)
+      .maybeSingle();
+    if (tErr) throw tErr;
+    if (!t) throw new Error("Ticket not found");
+    const { error } = await supabase.from("ticket_history").insert({
+      ticket_id: data.ticketId,
+      from_status: t.status,
+      to_status: t.status,
+      changed_by: userId,
+      note: data.note,
+    } as never);
+    if (error) throw error;
+    return { ok: true };
+  });
+
 export const listUsers = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
