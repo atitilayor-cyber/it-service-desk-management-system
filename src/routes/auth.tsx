@@ -27,6 +27,7 @@ export const Route = createFileRoute("/auth")({
 });
 
 const DEMO_ACCOUNTS = [
+  { label: "Rukayat (Admin)", email: "rukayat@demo.com", desc: "Your admin account · password: Rukayat1234!" },
   { label: "Administrator", email: "admin@demo.com", desc: "Full access — manage tickets, users & reports" },
   { label: "IT Technician", email: "tech@demo.com", desc: "See assigned tickets and update status" },
   { label: "End User", email: "user@demo.com", desc: "Submit and track your support tickets" },
