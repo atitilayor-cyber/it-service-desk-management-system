@@ -7,6 +7,7 @@ import {
   assignTicket,
   listTechnicians,
   updateTicketStatus,
+  addTicketNote,
 } from "@/lib/tickets.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
