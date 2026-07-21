@@ -62,10 +62,20 @@ function TicketDetail() {
     mutationFn: () =>
       updateFn({ data: { ticketId: id, status: newStatus, resolution: resolution || undefined } }),
     onSuccess: () => {
-      toast.success("Status updated");
+      toast.success(newStatus === "Resolved" ? "Ticket marked as Resolved — requester notified" : `Status updated to ${newStatus}`);
       setResolution("");
       qc.invalidateQueries({ queryKey: ["ticket", id] });
       qc.invalidateQueries({ queryKey: ["tickets"] });
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
+  const noteMut = useMutation({
+    mutationFn: () => addNoteFn({ data: { ticketId: id, note: workNote } }),
+    onSuccess: () => {
+      toast.success("Work note added");
+      setWorkNote("");
+      qc.invalidateQueries({ queryKey: ["ticket", id] });
     },
     onError: (e) => toast.error((e as Error).message),
   });
