@@ -81,7 +81,7 @@ function AuthPage() {
 
   function fillDemo(demoEmail: string) {
     setEmail(demoEmail);
-    setPassword("Demo1234!");
+    setPassword(demoEmail === "rukayat@demo.com" ? "Rukayat1234!" : "Demo1234!");
     setMode("signin");
   }
 
