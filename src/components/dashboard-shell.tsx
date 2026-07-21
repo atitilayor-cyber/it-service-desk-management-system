@@ -11,9 +11,10 @@ import {
   PlusCircle,
   Headphones,
   Menu,
+  Bell,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { getMe } from "@/lib/tickets.functions";
+import { getMe, listTickets } from "@/lib/tickets.functions";
 import { ROLE_LABEL, type AppRole } from "@/lib/roles";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
