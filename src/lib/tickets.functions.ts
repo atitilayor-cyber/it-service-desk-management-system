@@ -104,7 +104,7 @@ export const createTicket = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     const { data: inserted, error } = await supabase
       .from("tickets")
-      .insert({ ...data, created_by: userId, status: "Open" })
+      .insert({ ...data, created_by: userId, status: "Open" } as never)
       .select("*")
       .single();
     if (error) throw error;
@@ -143,7 +143,7 @@ export const updateTicketStatus = createServerFn({ method: "POST" })
     const { supabase } = context;
     const patch: Record<string, unknown> = { status: data.status };
     if (data.resolution) patch.resolution = data.resolution;
-    const { error } = await supabase.from("tickets").update(patch).eq("id", data.ticketId);
+    const { error } = await supabase.from("tickets").update(patch as never).eq("id", data.ticketId);
     if (error) throw error;
     return { ok: true };
   });
