@@ -33,6 +33,7 @@ function TicketDetail() {
   const listTechFn = useServerFn(listTechnicians);
   const assignFn = useServerFn(assignTicket);
   const updateFn = useServerFn(updateTicketStatus);
+  const addNoteFn = useServerFn(addTicketNote);
 
   const { data, isLoading } = useQuery({ queryKey: ["ticket", id], queryFn: () => getTicketFn({ data: { id } }) });
   const { data: me } = useQuery({ queryKey: ["me"], queryFn: () => meFn() });
@@ -45,6 +46,7 @@ function TicketDetail() {
   const [selectedTech, setSelectedTech] = useState<string>("");
   const [newStatus, setNewStatus] = useState<TicketStatus>("In Progress");
   const [resolution, setResolution] = useState("");
+  const [workNote, setWorkNote] = useState("");
 
   const assignMut = useMutation({
     mutationFn: (tid: string) => assignFn({ data: { ticketId: id, technicianId: tid } }),
