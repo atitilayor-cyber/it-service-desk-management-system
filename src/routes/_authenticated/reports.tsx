@@ -120,9 +120,14 @@ function Reports() {
           <h2 className="text-2xl font-bold tracking-tight">Reports & Analytics</h2>
           <p className="text-sm text-muted-foreground">Ticket performance and technician workload.</p>
         </div>
-        <Button variant="outline" onClick={exportCsv}>
-          <Download className="mr-2 h-4 w-4" /> Export CSV
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={exportCsv}>
+            <Download className="mr-2 h-4 w-4" /> Export CSV
+          </Button>
+          <Button onClick={exportPdf}>
+            <FileText className="mr-2 h-4 w-4" /> Export PDF
+          </Button>
+        </div>
       </div>
 
       <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
