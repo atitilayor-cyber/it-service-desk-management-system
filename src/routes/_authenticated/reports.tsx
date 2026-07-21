@@ -17,7 +17,9 @@ import {
   Cell,
   Legend,
 } from "recharts";
-import { Download } from "lucide-react";
+import { Download, FileText } from "lucide-react";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 export const Route = createFileRoute("/_authenticated/reports")({
   component: Reports,
