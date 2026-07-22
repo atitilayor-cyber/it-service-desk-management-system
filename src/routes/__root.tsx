@@ -79,7 +79,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "HelpDesk Pro — IT Service Desk Management System" },
+      { title: "IT Service Desk Management System" },
       {
         name: "description",
         content:

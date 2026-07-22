@@ -157,7 +157,7 @@ function PageTitle() {
   };
   const title =
     map[pathname] ??
-    (pathname.startsWith("/tickets/") ? "Ticket Details" : "HelpDesk Pro");
+    (pathname.startsWith("/tickets/") ? "Ticket Details" : "IT Service Desk Management System");
   return <h1 className="text-base font-semibold tracking-tight">{title}</h1>;
 }
 

@@ -95,7 +95,7 @@ function AuthPage() {
             <Headphones className="h-5 w-5" />
           </div>
           <div>
-            <div className="text-lg font-bold tracking-tight">HelpDesk Pro</div>
+            <div className="text-lg font-bold tracking-tight">IT Service Desk</div>
             <div className="text-xs uppercase tracking-widest text-indigo-200/80">IT Service Desk</div>
           </div>
         </div>
