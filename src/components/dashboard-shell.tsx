@@ -99,7 +99,7 @@ function SidebarInner({
           <Headphones className="h-5 w-5" />
         </div>
         <div className="min-w-0">
-          <div className="text-sm font-bold tracking-tight truncate">HelpDesk Pro</div>
+          <div className="text-sm font-bold tracking-tight truncate">IT Service Desk</div>
           <div className="text-[11px] uppercase tracking-wider text-sidebar-foreground/60">
             Service Desk
           </div>

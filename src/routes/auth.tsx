@@ -19,8 +19,8 @@ export const Route = createFileRoute("/auth")({
   },
   head: () => ({
     meta: [
-      { title: "Sign in — HelpDesk Pro" },
-      { name: "description", content: "Sign in to HelpDesk Pro, the IT service desk management system." },
+      { title: "Sign in — IT Service Desk Management System" },
+      { name: "description", content: "Sign in to the IT Service Desk Management System." },
     ],
   }),
   component: AuthPage,
