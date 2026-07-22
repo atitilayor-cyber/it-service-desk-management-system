@@ -46,6 +46,16 @@ const STATUS_CHART_COLORS: Record<TicketStatus, string> = {
 function Dashboard() {
   const fn = useServerFn(listTickets);
   const { data, isLoading } = useQuery({ queryKey: ["tickets"], queryFn: () => fn() });
+  const { data: me } = useQuery({
+    queryKey: ["me"],
+    queryFn: async () => {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { data: u } = await supabase.auth.getUser();
+      if (!u.user) return null;
+      const { data: p } = await supabase.from("profiles").select("full_name").eq("id", u.user.id).maybeSingle();
+      return p?.full_name || u.user.user_metadata?.full_name || u.user.email?.split("@")[0] || "there";
+    },
+  });
 
   if (isLoading || !data) return <div className="text-sm text-muted-foreground">Loading dashboard…</div>;
 
