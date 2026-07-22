@@ -85,7 +85,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content:
           "A modern web-based IT Service Desk platform: submit tickets, track status, assign technicians, and view real-time analytics.",
       },
-      { property: "og:title", content: "HelpDesk Pro — IT Service Desk" },
+      { property: "og:title", content: "IT Service Desk Management System" },
       {
         property: "og:description",
         content: "Role-based ticketing, live dashboards, and reports for university IT support.",

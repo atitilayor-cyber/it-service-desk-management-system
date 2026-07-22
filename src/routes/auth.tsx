@@ -115,7 +115,7 @@ function AuthPage() {
         </div>
 
         <div className="relative z-10 text-xs text-indigo-200/60">
-          © 2026 HelpDesk Pro · Final Year Academic Project
+          © 2026 IT Service Desk Management System · Final Year Academic Project
         </div>
       </div>
 
