@@ -19,8 +19,8 @@ export const Route = createFileRoute("/auth")({
   },
   head: () => ({
     meta: [
-      { title: "Sign in — HelpDesk Pro" },
-      { name: "description", content: "Sign in to HelpDesk Pro, the IT service desk management system." },
+      { title: "Sign in — IT Service Desk Management System" },
+      { name: "description", content: "Sign in to the IT Service Desk Management System." },
     ],
   }),
   component: AuthPage,
@@ -95,7 +95,7 @@ function AuthPage() {
             <Headphones className="h-5 w-5" />
           </div>
           <div>
-            <div className="text-lg font-bold tracking-tight">HelpDesk Pro</div>
+            <div className="text-lg font-bold tracking-tight">IT Service Desk</div>
             <div className="text-xs uppercase tracking-widest text-indigo-200/80">IT Service Desk</div>
           </div>
         </div>
@@ -115,7 +115,7 @@ function AuthPage() {
         </div>
 
         <div className="relative z-10 text-xs text-indigo-200/60">
-          © 2026 HelpDesk Pro · Final Year Academic Project
+          © 2026 IT Service Desk Management System · Final Year Academic Project
         </div>
       </div>
 

@@ -77,7 +77,7 @@ function Reports() {
   function exportPdf() {
     const doc = new jsPDF();
     doc.setFontSize(16);
-    doc.text("HelpDesk Pro — Tickets Report", 14, 18);
+    doc.text("IT Service Desk Management System — Tickets Report", 14, 18);
     doc.setFontSize(10);
     doc.setTextColor(120);
     doc.text(`Generated ${new Date().toLocaleString()}`, 14, 25);

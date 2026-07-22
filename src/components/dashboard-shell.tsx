@@ -99,7 +99,7 @@ function SidebarInner({
           <Headphones className="h-5 w-5" />
         </div>
         <div className="min-w-0">
-          <div className="text-sm font-bold tracking-tight truncate">HelpDesk Pro</div>
+          <div className="text-sm font-bold tracking-tight truncate">IT Service Desk</div>
           <div className="text-[11px] uppercase tracking-wider text-sidebar-foreground/60">
             Service Desk
           </div>
@@ -157,7 +157,7 @@ function PageTitle() {
   };
   const title =
     map[pathname] ??
-    (pathname.startsWith("/tickets/") ? "Ticket Details" : "HelpDesk Pro");
+    (pathname.startsWith("/tickets/") ? "Ticket Details" : "IT Service Desk Management System");
   return <h1 className="text-base font-semibold tracking-tight">{title}</h1>;
 }
 
