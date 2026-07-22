@@ -111,7 +111,12 @@ function Dashboard() {
 
   return (
     <div className="space-y-6">
+      <div className="rounded-xl border bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-950/40 dark:to-violet-950/40 px-5 py-4">
+        <h1 className="text-xl font-bold tracking-tight">Welcome back, {me || "there"}</h1>
+        <p className="text-sm text-muted-foreground">Here's what's happening in your service desk today.</p>
+      </div>
       <div className="flex flex-wrap items-start justify-between gap-4">
+
         <div className="min-w-0">
           <h2 className="text-2xl font-bold tracking-tight">{roleTitle}</h2>
           <p className="text-sm text-muted-foreground">{roleSubtitle}</p>
