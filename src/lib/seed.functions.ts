@@ -7,6 +7,9 @@ export const seedDemoData = createServerFn({ method: "POST" }).handler(async () 
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
   const demoUsers = [
+    { email: "admin@servicedesk.demo", password: "Admin@123", full_name: "Rukayat", department: "IT Administration", role: "admin" as const },
+    { email: "technician@servicedesk.demo", password: "Tech@123", full_name: "Priya Sharma", department: "IT Support", role: "technician" as const },
+    { email: "user@servicedesk.demo", password: "User@123", full_name: "Jamie Rivera", department: "Computer Science", role: "end_user" as const },
     { email: "admin@demo.com", password: "Demo1234!", full_name: "Admin- Rukayat", department: "IT Administration", role: "admin" as const },
     { email: "rukayat@demo.com", password: "Rukayat1234!", full_name: "Rukayat", department: "IT Administration", role: "admin" as const },
     { email: "tech@demo.com", password: "Demo1234!", full_name: "Priya Sharma", department: "IT Support", role: "technician" as const },
