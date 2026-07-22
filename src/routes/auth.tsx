@@ -189,7 +189,7 @@ function AuthPage() {
               ))}
             </div>
             <div className="text-[11px] text-muted-foreground">
-              Password for all demo accounts: <span className="font-mono">Demo1234!</span>
+              Click any account above to auto-fill credentials.
             </div>
           </Card>
         </div>
