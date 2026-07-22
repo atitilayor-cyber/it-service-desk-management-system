@@ -26,11 +26,10 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
-const DEMO_ACCOUNTS = [
-  { label: "Rukayat (Admin)", email: "rukayat@demo.com", desc: "Your admin account · password: Rukayat1234!" },
-  { label: "Administrator", email: "admin@demo.com", desc: "Full access — manage tickets, users & reports" },
-  { label: "IT Technician", email: "tech@demo.com", desc: "See assigned tickets and update status" },
-  { label: "End User", email: "user@demo.com", desc: "Submit and track your support tickets" },
+const DEMO_ACCOUNTS: { label: string; email: string; password: string; desc: string }[] = [
+  { label: "Administrator (Rukayat)", email: "admin@servicedesk.demo", password: "Admin@123", desc: "Full access — manage tickets, users & reports" },
+  { label: "IT Support Technician", email: "technician@servicedesk.demo", password: "Tech@123", desc: "See assigned tickets and update status" },
+  { label: "End User", email: "user@servicedesk.demo", password: "User@123", desc: "Submit and track your support tickets" },
 ];
 
 function AuthPage() {
