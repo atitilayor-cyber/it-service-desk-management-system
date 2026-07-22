@@ -180,11 +180,11 @@ function AuthPage() {
                 <button
                   key={d.email}
                   type="button"
-                  onClick={() => fillDemo(d.email)}
+                  onClick={() => fillDemo(d.email, d.password)}
                   className="w-full rounded-md border bg-background px-3 py-2 text-left text-sm transition-colors hover:bg-accent"
                 >
                   <div className="font-medium">{d.label}</div>
-                  <div className="text-xs text-muted-foreground truncate">{d.email} · {d.desc}</div>
+                  <div className="text-xs text-muted-foreground truncate">{d.email} · {d.password}</div>
                 </button>
               ))}
             </div>
