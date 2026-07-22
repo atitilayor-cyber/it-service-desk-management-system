@@ -46,6 +46,16 @@ const STATUS_CHART_COLORS: Record<TicketStatus, string> = {
 function Dashboard() {
   const fn = useServerFn(listTickets);
   const { data, isLoading } = useQuery({ queryKey: ["tickets"], queryFn: () => fn() });
+  const { data: me } = useQuery({
+    queryKey: ["me"],
+    queryFn: async () => {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { data: u } = await supabase.auth.getUser();
+      if (!u.user) return null;
+      const { data: p } = await supabase.from("profiles").select("full_name").eq("id", u.user.id).maybeSingle();
+      return p?.full_name || u.user.user_metadata?.full_name || u.user.email?.split("@")[0] || "there";
+    },
+  });
 
   if (isLoading || !data) return <div className="text-sm text-muted-foreground">Loading dashboard…</div>;
 
@@ -101,7 +111,12 @@ function Dashboard() {
 
   return (
     <div className="space-y-6">
+      <div className="rounded-xl border bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-950/40 dark:to-violet-950/40 px-5 py-4">
+        <h1 className="text-xl font-bold tracking-tight">Welcome back, {me || "there"}</h1>
+        <p className="text-sm text-muted-foreground">Here's what's happening in your service desk today.</p>
+      </div>
       <div className="flex flex-wrap items-start justify-between gap-4">
+
         <div className="min-w-0">
           <h2 className="text-2xl font-bold tracking-tight">{roleTitle}</h2>
           <p className="text-sm text-muted-foreground">{roleSubtitle}</p>

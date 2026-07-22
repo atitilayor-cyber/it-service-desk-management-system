@@ -26,11 +26,10 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
-const DEMO_ACCOUNTS = [
-  { label: "Rukayat (Admin)", email: "rukayat@demo.com", desc: "Your admin account · password: Rukayat1234!" },
-  { label: "Administrator", email: "admin@demo.com", desc: "Full access — manage tickets, users & reports" },
-  { label: "IT Technician", email: "tech@demo.com", desc: "See assigned tickets and update status" },
-  { label: "End User", email: "user@demo.com", desc: "Submit and track your support tickets" },
+const DEMO_ACCOUNTS: { label: string; email: string; password: string; desc: string }[] = [
+  { label: "Administrator (Rukayat)", email: "admin@servicedesk.demo", password: "Admin@123", desc: "Full access — manage tickets, users & reports" },
+  { label: "IT Support Technician", email: "technician@servicedesk.demo", password: "Tech@123", desc: "See assigned tickets and update status" },
+  { label: "End User", email: "user@servicedesk.demo", password: "User@123", desc: "Submit and track your support tickets" },
 ];
 
 function AuthPage() {
@@ -79,9 +78,9 @@ function AuthPage() {
     }
   }
 
-  function fillDemo(demoEmail: string) {
+  function fillDemo(demoEmail: string, demoPassword: string) {
     setEmail(demoEmail);
-    setPassword(demoEmail === "rukayat@demo.com" ? "Rukayat1234!" : "Demo1234!");
+    setPassword(demoPassword);
     setMode("signin");
   }
 
@@ -181,16 +180,16 @@ function AuthPage() {
                 <button
                   key={d.email}
                   type="button"
-                  onClick={() => fillDemo(d.email)}
+                  onClick={() => fillDemo(d.email, d.password)}
                   className="w-full rounded-md border bg-background px-3 py-2 text-left text-sm transition-colors hover:bg-accent"
                 >
                   <div className="font-medium">{d.label}</div>
-                  <div className="text-xs text-muted-foreground truncate">{d.email} · {d.desc}</div>
+                  <div className="text-xs text-muted-foreground truncate">{d.email} · {d.password}</div>
                 </button>
               ))}
             </div>
             <div className="text-[11px] text-muted-foreground">
-              Password for all demo accounts: <span className="font-mono">Demo1234!</span>
+              Click any account above to auto-fill credentials.
             </div>
           </Card>
         </div>
