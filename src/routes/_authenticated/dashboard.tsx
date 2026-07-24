@@ -47,7 +47,7 @@ function Dashboard() {
   const fn = useServerFn(listTickets);
   const { data, isLoading } = useQuery({ queryKey: ["tickets"], queryFn: () => fn() });
   const { data: me } = useQuery({
-    queryKey: ["me"],
+    queryKey: ["me-name"],
     queryFn: async () => {
       const { supabase } = await import("@/integrations/supabase/client");
       const { data: u } = await supabase.auth.getUser();
